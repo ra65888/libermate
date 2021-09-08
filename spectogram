@@ -1,0 +1,42 @@
+%espectro de la seÃ±al
+close all; clearvars; close all;
+ 
+fid=fopen('sig.ej');
+a=fread(fid);
+donn=a;
+donn=donn-mean(donn);
+
+figure(1)
+espec=abs(fft(donn));
+%frecuencia de muestreo
+fmues=10;
+pas=1/fmues;
+nump=length(donn);
+t=0:pas:(nump-1)*pas;
+plot(t,donn)
+xlim([0 max(t)])
+%espectro normalizado
+espec=espec/max(espec);
+%eje de la frecuencia
+dim=length(donn)*pas;
+ejf=[0:1/dim:(length(donn)-1)/dim];
+figure(2)
+plot(ejf,espec)
+axis([0 fmues/2 min(espec) 1])
+xlabel('f(Hz)')
+
+figure(3)
+%espectrograma de la seÃ±al
+
+%nÃºmero de puntos del FFT.Debe ser una potencia de 2.
+nfft=2^6;
+%Creamos la ventana
+window=hanning(nfft);
+%parÃ¡metro de traslape
+noverlap=length(window)-1;
+specgram(donn,nfft,fmues,window,noverlap);
+colormap(jet);
+v=axis;
+axis([v(1) v(2) v(3) fmues/2])
+xlabel(['t (s)'])
+ylabel(['Frecuencia (Hz)'])
